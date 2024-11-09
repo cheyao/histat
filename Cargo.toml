@@ -2,7 +2,7 @@
 name = "histat"
 version = "1.0.0"
 edition = "2021"
-license = "zlib"
+license = "Zlib"
 description = "Zsh history stats"
 repository = "https://github.com/cheyao/histat.git"
 

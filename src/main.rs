@@ -41,18 +41,6 @@ fn parse(file: &str, lines: u64) -> io::Result<()> {
             .or_insert(1);
     }
 
-    /*
-    let max = match get_max(&hist) {
-        Some(val) => val,
-        None => {
-            println!("History file is empty!");
-            return Ok(());
-        }
-    };
-
-    println!("Your most used command is {} {}", max, hist[max]);
-    */
-
     let count_b: BTreeMap<&u64, &String> = hist.iter().map(|(k, v)| (v, k)).collect();
 
     let mut count: u64 = 0;
