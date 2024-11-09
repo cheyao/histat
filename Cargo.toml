@@ -5,6 +5,7 @@ edition = "2021"
 license = "Zlib"
 description = "Zsh history stats"
 repository = "https://github.com/cheyao/histat.git"
+readme = "README.md"
 
 [dependencies]
 clap = { version = "4.5.20", features = ["derive"] }
