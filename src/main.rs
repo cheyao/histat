@@ -1,16 +1,21 @@
-use std::collections::HashMap;
+use clap::Parser;
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
-use std::path::Path;
 
-fn get_max<K, V>(map: &HashMap<K, V>) -> Option<&K>
-where
-    V: Ord,
-{
-    map.iter().max_by(|a, b| a.1.cmp(b.1)).map(|(k, _v)| k)
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    // History file to read
+    #[arg(short, long, default_value_t = String::from("~/.zsh_history"))]
+    file: String,
+
+    // Lines to print
+    #[arg(short, long, default_value_t = 5)]
+    lines: u64,
 }
 
-fn parse(file: &str) -> io::Result<()> {
+fn parse(file: &str, lines: u64) -> io::Result<()> {
     let file = File::open(file)?;
     let reader = BufReader::new(file);
 
@@ -36,6 +41,7 @@ fn parse(file: &str) -> io::Result<()> {
             .or_insert(1);
     }
 
+    /*
     let max = match get_max(&hist) {
         Some(val) => val,
         None => {
@@ -44,18 +50,31 @@ fn parse(file: &str) -> io::Result<()> {
         }
     };
 
+    println!("Your most used command is {} {}", max, hist[max]);
+    */
 
+    let count_b: BTreeMap<&u64, &String> = hist.iter().map(|(k, v)| (v, k)).collect();
+
+    let mut count: u64 = 0;
+    for key in count_b.into_iter().rev() {
+        println!("{} {}", key.0, key.1);
+
+        count += 1;
+        if count == lines {
+            break;
+        }
+    }
 
     Ok(())
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let args = Args::parse();
 
     let home_dir = dirs::home_dir().expect("Hey! I can't get your home dir");
     let home_dir = home_dir.to_str().expect("This shouldn't fail");
-    let home_zsh_dir = format!("{home_dir}/.zsh_history");
 
+    /*
     let result = if args.len() >= 2 {
         parse(&args[1])
     } else if Path::new(".zsh_history").exists() {
@@ -64,12 +83,15 @@ fn main() {
         parse(&home_zsh_dir)
     } else {
         println!("Couldn't find history file!");
-        println!("Usage: {} [history fike]", args[0]);
         Ok(())
     };
+    */
+    let file = args.file;
+    let file = file.replace("~", home_dir);
+    let result = parse(&file, args.lines);
 
     match result {
-        Ok(file) => file,
+        Ok(x) => x,
         Err(error) => panic!("Failed to read hist file: {error}"),
     }
 }
