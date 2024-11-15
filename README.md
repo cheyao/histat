@@ -26,3 +26,4 @@ Options:
   -V, --version        Print version
 ```
 
+NOTE: The history file defaults to `~/.zsh_history` because there is no way to access the $HISTFILE shell variable
